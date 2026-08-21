@@ -1,0 +1,44 @@
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+  
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform + AWS
+        uses: ./.github/actions/setup-terraform
+        with:
+          aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
+
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan-step
+        run: |
+          terraform plan \
+            terraform plan -var-file="terraform.tfvars.example" \
+            -out=tfplan
+          echo "result=success" >> $GITHUB_OUTPUT
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan

@@ -1,0 +1,29 @@
+name: 'Setup Terraform + AWS'
+description: 'Configures AWS credentials and Terraform CLI'
+
+inputs:
+  aws-role-arn:
+    description: 'IAM role ARN to assume via OIDC'
+    required: true
+  
+  terraform-version:
+    description: 'Terraform CLI version'
+    required: false
+    default: '1.6.6'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.aws-role-arn }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ inputs.terraform-version }}
+
+    - name: Terraform Init
+      run: terraform init
+      shell: bash

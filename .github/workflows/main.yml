@@ -1,0 +1,23 @@
+name: Deploy Lambda S3 Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  call-plan:
+    uses: ./.github/workflows/terraform-plan.yml
+    
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+
+  call-apply:
+    needs: call-plan
+   
+    uses: ./.github/workflows/terraform-apply.yml
+   
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}

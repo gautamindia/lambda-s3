@@ -1,0 +1,10 @@
+# Copy this file to terraform.tfvars (or pass equivalent -var flags / CI
+# variables) and fill in real values. terraform.tfvars is gitignored by
+# default in most setups — do not commit account-specific values.
+
+aws_region             = "ap-south-1"
+project_name           = "file-processor"
+environment             = "dev"
+bucket_suffix           = "123456789012"   # e.g. your AWS account ID, for global uniqueness
+force_destroy_buckets   = true
+
