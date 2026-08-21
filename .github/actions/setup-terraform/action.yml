@@ -12,7 +12,7 @@ inputs:
   terraform-version:
     description: 'Terraform CLI version'
     required: false
-    default: '1.6.6'
+    default: '1.11.0'
 
 runs:
   using: "composite"
