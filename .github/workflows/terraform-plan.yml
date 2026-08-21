@@ -2,12 +2,12 @@ name: Terraform Plan
 
 on:
   workflow_call:
-    inputs:
-      
     secrets:
       AWS_ROLE_ARN:
         required: true
-  
+    outputs:
+      plan-status:
+        value: ${{ jobs.plan.outputs.status }}
 
 permissions:
   id-token: write
@@ -16,7 +16,8 @@ permissions:
 jobs:
   plan:
     runs-on: ubuntu-latest
-  
+    outputs:
+      status: ${{ steps.plan-step.outputs.result }}
     steps:
       - uses: actions/checkout@v4
 
@@ -25,16 +26,13 @@ jobs:
         with:
           aws-role-arn: ${{ secrets.AWS_ROLE_ARN }}
 
-
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
         id: plan-step
         run: |
-          terraform plan \
-            terraform plan -var-file="terraform.tfvars.example" \
-            -out=tfplan
+          terraform plan -var-file="terraform.tfvars.example" -out=tfplan
           echo "result=success" >> $GITHUB_OUTPUT
 
       - name: Upload plan artifact
